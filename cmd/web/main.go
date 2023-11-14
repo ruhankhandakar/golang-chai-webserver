@@ -1,17 +1,25 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
+	"ruhan.tech/golang-web/pkg/config"
 	"ruhan.tech/golang-web/pkg/handlers"
 )
 
 func main() {
+	var app config.AppConfig
 
-	http.HandleFunc("/", handlers.HomeHandler)
-	http.HandleFunc("/about", handlers.AboutHandler)
+	repo := handlers.NewRepo(&app)
+	handlers.NewHandler(repo)
 
-	err := http.ListenAndServe(":8081", nil)
-	log.Fatal(err)
+	serve := &http.Server{
+		Addr:    ":8081",
+		Handler: routes(&app),
+	}
+
+	err := serve.ListenAndServe()
+	if err != nil {
+		panic(err)
+	}
 }
