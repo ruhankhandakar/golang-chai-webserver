@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"net/http"
 	"text/template"
+
+	"ruhan.tech/golang-web/models"
 )
 
 var templateCache = make(map[string]*template.Template)
 
-func RenderTemplate(res http.ResponseWriter, templ string) {
+func RenderTemplate(res http.ResponseWriter, templ string, pgData *models.PageData) {
 	var tmpl *template.Template
 	var err error
 
@@ -23,7 +25,7 @@ func RenderTemplate(res http.ResponseWriter, templ string) {
 		fmt.Println("Template already in cache")
 	}
 	tmpl = templateCache[templ]
-	err = tmpl.Execute(res, nil)
+	err = tmpl.Execute(res, pgData)
 	if err != nil {
 		fmt.Println("Error parsing template:", err)
 	}
