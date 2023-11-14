@@ -1,5 +1,7 @@
 package models
 
+import "ruhan.tech/golang-web/pkg/forms"
+
 type PageData struct {
 	StrMap          map[string]string
 	IntMap          map[string]int
@@ -9,4 +11,6 @@ type PageData struct {
 	Warning         string
 	Error           string
 	IsAuthenticated int
+	Form            *forms.Form
+	Data            map[string]interface{}
 }

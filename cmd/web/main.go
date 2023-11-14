@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/gob"
 	"net/http"
 	"time"
 
+	"ruhan.tech/golang-web/models"
 	"ruhan.tech/golang-web/pkg/config"
 	"ruhan.tech/golang-web/pkg/handlers"
 
@@ -14,6 +16,9 @@ var sessionManager *scs.SessionManager
 var app config.AppConfig
 
 func main() {
+
+	gob.Register(models.Article{})
+
 	sessionManager = scs.New()
 	sessionManager.Lifetime = 24 * time.Hour // 24 hours
 	sessionManager.Cookie.Persist = true

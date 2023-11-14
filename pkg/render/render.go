@@ -5,12 +5,18 @@ import (
 	"net/http"
 	"text/template"
 
+	"github.com/justinas/nosurf"
 	"ruhan.tech/golang-web/models"
 )
 
 var templateCache = make(map[string]*template.Template)
 
-func RenderTemplate(res http.ResponseWriter, templ string, pgData *models.PageData) {
+func AddCSRFData(pgData *models.PageData, req *http.Request) *models.PageData {
+	pgData.CSRFToken = nosurf.Token(req)
+	return pgData
+}
+
+func RenderTemplate(res http.ResponseWriter, req *http.Request, templ string, pgData *models.PageData) {
 	var tmpl *template.Template
 	var err error
 
@@ -25,6 +31,9 @@ func RenderTemplate(res http.ResponseWriter, templ string, pgData *models.PageDa
 		fmt.Println("Template already in cache")
 	}
 	tmpl = templateCache[templ]
+
+	pgData = AddCSRFData(pgData, req)
+
 	err = tmpl.Execute(res, pgData)
 	if err != nil {
 		fmt.Println("Error parsing template:", err)
