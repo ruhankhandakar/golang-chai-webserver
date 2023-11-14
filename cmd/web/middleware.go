@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/justinas/nosurf"
 )
 
 func LogRequestInfo(next http.Handler) http.Handler {
@@ -16,4 +18,23 @@ func LogRequestInfo(next http.Handler) http.Handler {
 
 		next.ServeHTTP(res, req)
 	})
+}
+
+func SetupSession(next http.Handler) http.Handler {
+	return sessionManager.LoadAndSave(next)
+}
+
+func NoSurf(next http.Handler) http.Handler {
+	noSurfHandler := nosurf.New(next)
+	noSurfHandler.SetBaseCookie(http.Cookie{
+		Name:     "mycsrfcookie",
+		Path:     "/",
+		Domain:   "",
+		Secure:   false, // Dev only, set true in prod
+		HttpOnly: true,
+		MaxAge:   3600,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	return noSurfHandler
 }

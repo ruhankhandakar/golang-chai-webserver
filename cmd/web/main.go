@@ -2,13 +2,25 @@ package main
 
 import (
 	"net/http"
+	"time"
 
 	"ruhan.tech/golang-web/pkg/config"
 	"ruhan.tech/golang-web/pkg/handlers"
+
+	"github.com/alexedwards/scs/v2"
 )
 
+var sessionManager *scs.SessionManager
+var app config.AppConfig
+
 func main() {
-	var app config.AppConfig
+	sessionManager = scs.New()
+	sessionManager.Lifetime = 24 * time.Hour // 24 hours
+	sessionManager.Cookie.Persist = true
+	sessionManager.Cookie.Secure = false // Dev only, set true in prod
+	sessionManager.Cookie.SameSite = http.SameSiteLaxMode
+
+	app.Session = sessionManager
 
 	repo := handlers.NewRepo(&app)
 	handlers.NewHandler(repo)

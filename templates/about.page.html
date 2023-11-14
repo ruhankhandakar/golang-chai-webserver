@@ -4,6 +4,12 @@
   <h2 class="blog-post-title mb-1">{{index .StrMap "title"}}</h2>
 
   <p>
+    {{if ne (index .StrMap "userId") "" }} Your userId is {{index .StrMap
+    "userId"}} {{else}} You aren't logged in. Login here <a href="/">Home</a>
+    {{end}}
+  </p>
+
+  <p>
     This blog post shows a few different types of content that’s supported and
     styled with Bootstrap. Basic typography, lists, tables, images, code, and
     more are all supported as expected.
